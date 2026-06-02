@@ -7,6 +7,7 @@ export const Root = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
