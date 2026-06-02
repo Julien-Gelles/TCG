@@ -3,7 +3,6 @@ import { AnimatePresence } from 'motion/react'
 import { Card } from './Card'
 import type { CardRevealStackProps } from '../../types/card'
 import { CardShell, CardImage } from '../../styles/Card.css'
-import { Button } from '@mui/material'
 import {
   Root,
   CardBack,
@@ -13,7 +12,6 @@ import {
   FlipGlow,
   Hint,
   RevealArea,
-  StaticCardSlot,
   Counter,
   Finished,
   FinishedEmoji,
@@ -178,13 +176,13 @@ export function CardRevealStack({ cards, onFinished }: CardRevealStackProps) {
           >
             <DeckContent>
               {[...cards.slice(currentIndex + 1)].reverse().map((card) => (
-                <StaticCardSlot key={card.id}>
+                <DeckCard key={card.id}>
                     <CardImage
                       src={card.image}
                       alt={card.id}
                       draggable={false}
                     />
-                </StaticCardSlot>
+                </DeckCard>
               ))}
 
               <Card

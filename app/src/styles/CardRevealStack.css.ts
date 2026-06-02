@@ -31,7 +31,7 @@ export const DeckCard = styled(motion.div)`
 `;
 
 export const CardBack = styled.div`
-  border-radius: 16px;
+  border-radius: 12px;
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.5),
     0 10px 28px rgba(0, 0, 0, 0.4);
@@ -70,10 +70,9 @@ export const FlipGlow = styled(motion.div)<{
 }>`
   position: absolute;
   inset: 0;
-  border-radius: 16px;
+  border-radius: 12px;
   pointer-events: none;
   ${({ $rarity }) => flipGlowStyles[$rarity]}
-  border: 2px solid red;
 `;
 
 const flipGlowStyles: Record<'common' | 'uncommon' | 'rare' | 'ultra', string> = {
@@ -109,17 +108,6 @@ export const RevealArea = styled(motion.div)`
   align-items: center;
   justify-content: center;
   gap: 32px;
-`;
-
-/*
-  Each non-active card — absolutely covers CardStack (not the full viewport),
-  so it is aligned with the active card by construction.
-  pointer-events: none — only the top Card (z-index 10 via CardWrapper) is interactive.
-*/
-export const StaticCardSlot = styled.div`
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
 `;
 
 export const Counter = styled.p`
