@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { AnimatePresence } from 'motion/react'
-import { Card } from './Card'
-import type { CardRevealStackProps } from '../../types/card'
+import { Card, DepartingCard } from './Card'
+import type { CardRevealStackProps, CardData } from '../../types/card'
 import { CardShell, CardImage } from '../../styles/Card.css'
 import {
   Root,
@@ -30,6 +30,14 @@ type Phase =
   | 'stack_front'
   | 'finished'
 
+type DepartingEntry = {
+  key: number
+  card: CardData
+  startX: number
+  direction: 1 | -1
+  isLast: boolean
+}
+
 const CARD_BACK_URL = 'https://images.pokemontcg.io/sv3pt5/245_hires.png'
 const COMPRESS_MS = 380
 const DEPTH_RATIO = 0.01
@@ -41,19 +49,26 @@ export function CardRevealStack({ cards, onFinished }: CardRevealStackProps) {
   const [phase, setPhase] = useState<Phase>('stack_back')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [nextCardRevealed, setNextCardRevealed] = useState(false)
+  const [departingCards, setDepartingCards] = useState<DepartingEntry[]>([])
+  const departingKey = useRef(0)
 
   const handleSwipe = useCallback(
-    (_direction: 'left' | 'right') => {
+    (direction: 'left' | 'right', currentX: number) => {
+      const dir = direction === 'right' ? 1 : -1
       const next = currentIndex + 1
-      if (next >= cards.length) {
-        setPhase('finished')
-        onFinished?.()
-      } else {
-        setCurrentIndex(next)
-        setNextCardRevealed(false)
+      const isLast = next >= cards.length
+      const departing: DepartingEntry = {
+        key: ++departingKey.current,
+        card: cards[currentIndex],
+        startX: currentX,
+        direction: dir,
+        isLast,
       }
+      setDepartingCards(prev => [...prev, departing])
+      setCurrentIndex(next)
+      setNextCardRevealed(false)
     },
-    [currentIndex, cards.length, onFinished]
+    [currentIndex, cards]
   )
 
   return (
@@ -183,18 +198,36 @@ export function CardRevealStack({ cards, onFinished }: CardRevealStackProps) {
                 )
               })}
 
-              <Card
-                key={`card-${currentIndex}`}
-                card={cards[currentIndex]}
-                onSwipe={handleSwipe}
-                onDragStart={() => setNextCardRevealed(true)}
-              />
+              {currentIndex < cards.length && (
+                <Card
+                  key={`card-${currentIndex}`}
+                  card={cards[currentIndex]}
+                  onSwipe={handleSwipe}
+                  onDragStart={() => setNextCardRevealed(true)}
+                />
+              )}
+
+              {departingCards.map(dep => (
+                <DepartingCard
+                  key={dep.key}
+                  card={dep.card}
+                  startX={dep.startX}
+                  direction={dep.direction}
+                  onDone={() => {
+                    setDepartingCards(prev => prev.filter(d => d.key !== dep.key))
+                    if (dep.isLast) {
+                      setPhase('finished')
+                      onFinished?.()
+                    }
+                  }}
+                />
+              ))}
             </DeckContent>
 
             <Hint>Glissez pour révéler</Hint>
 
             <Counter>
-              {currentIndex + 1}&thinsp;/&thinsp;{cards.length}
+              {Math.min(currentIndex + 1, cards.length)}&thinsp;/&thinsp;{cards.length}
             </Counter>
           </RevealArea>
         )}

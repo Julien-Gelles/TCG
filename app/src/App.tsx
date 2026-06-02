@@ -6,7 +6,7 @@ const DEMO_CARDS: CardData[] = [
   {
     id: 'varoom',
     image: 'https://images.pokemontcg.io/sv1/140_hires.png',
-    rarity: 'common',
+    rarity: 'rare',
   },
   {
     id: 'pineco',
