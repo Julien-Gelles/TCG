@@ -9,7 +9,6 @@ import {
   FlipCard,
   FlipFace,
   FlipFrontFace,
-  FlipGlow,
   Hint,
   RevealArea,
   Counter,
@@ -154,14 +153,6 @@ export function CardRevealStack({ cards, onFinished }: CardRevealStackProps) {
                       draggable={false}
                     />
                   </CardShell>
-                  <FlipGlow
-                    $rarity={cards[0].rarity}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{
-                      duration: 0
-                    }}
-                  />
                 </FlipFrontFace>
               </FlipCard>
             </DeckContent>

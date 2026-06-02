@@ -57,31 +57,6 @@ export const FlipFrontFace = styled(FlipFace)`
   transform: rotateY(180deg);
 `;
 
-/*
-  Glow overlay placed inside FlipFrontFace.
-  Because it inherits backface-visibility:hidden from its parent, it is invisible
-  during the first 90° of the flip — exactly when the back is facing the viewer.
-  Its opacity animation starts at t=0 (same moment as the flip) with the same
-  duration (0.8 s), so when the front face first becomes visible at ~t=0.4 s,
-  the glow is already at ~50 % opacity and builds to 100 % by flip end.
-*/
-export const FlipGlow = styled(motion.div)<{
-  $rarity: 'common' | 'uncommon' | 'rare' | 'ultra';
-}>`
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  pointer-events: none;
-  ${({ $rarity }) => flipGlowStyles[$rarity]}
-`;
-
-const flipGlowStyles: Record<'common' | 'uncommon' | 'rare' | 'ultra', string> = {
-  common:   '',
-  uncommon: 'box-shadow: 0 0 32px 10px rgba(80, 200, 120, 0.55);',
-  rare:     'box-shadow: 0 0 42px 14px rgba(80, 140, 255, 0.65);',
-  ultra:    'box-shadow: 0 0 56px 18px rgba(255, 200, 40, 0.70);',
-};
-
 // ─── Hint text ────────────────────────────────────────────────────────────────
 
 const pulseAnimation = keyframes`
