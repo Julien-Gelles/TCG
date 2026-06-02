@@ -41,6 +41,7 @@ const CARDS_SHIFT = 12
 export function CardRevealStack({ cards, onFinished }: CardRevealStackProps) {
   const [phase, setPhase] = useState<Phase>('stack_back')
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [nextCardRevealed, setNextCardRevealed] = useState(false)
 
   const handleSwipe = useCallback(
     (_direction: 'left' | 'right') => {
@@ -50,6 +51,7 @@ export function CardRevealStack({ cards, onFinished }: CardRevealStackProps) {
         onFinished?.()
       } else {
         setCurrentIndex(next)
+        setNextCardRevealed(false)
       }
     },
     [currentIndex, cards.length, onFinished]
@@ -175,20 +177,26 @@ export function CardRevealStack({ cards, onFinished }: CardRevealStackProps) {
             exit={{ opacity: 0, transition: { duration: 0.15 } }}
           >
             <DeckContent>
-              {[...cards.slice(currentIndex + 1)].reverse().map((card) => (
-                <DeckCard key={card.id}>
-                    <CardImage
-                      src={card.image}
-                      alt={card.id}
-                      draggable={false}
-                    />
-                </DeckCard>
-              ))}
+              {[...cards.slice(currentIndex + 1)].reverse().map((card) => {
+                const isSecond = card === cards[currentIndex + 1]
+                return (
+                  <DeckCard key={card.id}>
+                    {isSecond && nextCardRevealed ? (
+                      <CardShell $rarity={card.rarity}>
+                        <CardImage src={card.image} alt={card.id} draggable={false} />
+                      </CardShell>
+                    ) : (
+                      <CardImage src={card.image} alt={card.id} draggable={false} />
+                    )}
+                  </DeckCard>
+                )
+              })}
 
               <Card
                 key={`card-${currentIndex}`}
                 card={cards[currentIndex]}
                 onSwipe={handleSwipe}
+                onDragStart={() => setNextCardRevealed(true)}
               />
             </DeckContent>
 

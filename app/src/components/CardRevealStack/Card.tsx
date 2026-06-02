@@ -6,15 +6,13 @@ import { CardWrapper, CardShell, CardImage } from '../../styles/Card.css';
 interface CardProps {
   card: CardData;
   onSwipe: (direction: 'left' | 'right') => void;
-  holo?: boolean;
-  glare?: boolean;
-  parallax?: boolean;
+  onDragStart?: () => void;
 }
 
 const SWIPE_OFFSET_THRESHOLD = 100;
 const SWIPE_VELOCITY_THRESHOLD = 500;
 
-export function Card({ card, onSwipe }: CardProps) {
+export function Card({ card, onSwipe, onDragStart }: CardProps) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-320, 0, 320], [-22, 0, 22]);
   const opacity = useTransform(x, [-280, -120, 0, 120, 280], [0.6, 1, 1, 1, 0.6]);
@@ -48,6 +46,7 @@ export function Card({ card, onSwipe }: CardProps) {
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.75}
+      onDragStart={onDragStart}
       onDragEnd={handleDragEnd}
       whileDrag={{ scale: 1.06 }}
     >
