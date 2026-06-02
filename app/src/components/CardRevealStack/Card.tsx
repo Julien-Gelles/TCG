@@ -59,17 +59,27 @@ export function Card({ card, onSwipe, onDragStart }: CardProps) {
 export function DepartingCard({ card, startX, direction, onDone }: DepartingCardProps) {
   const x = useMotionValue(startX)
   const rotate = useTransform(x, [-320, 0, 320], [-22, 0, 22])
-  const opacity = useTransform(x, [-280, -120, 0, 120, 280], [0.6, 1, 1, 1, 0.6])
+  const opacity = useMotionValue(1)
 
   useEffect(() => {
-    const controls = animate(x, direction * (window.innerWidth + 320), {
+    // stop just past the screen edge (card width 280, centered → need W/2 + 140 to clear)
+    const target = direction * (window.innerWidth / 3)
+
+    const xControls = animate(x, target, {
       type: 'spring',
       stiffness: 200,
       damping: 26,
       restSpeed: 10,
       onComplete: onDone,
     })
-    return () => controls.stop()
+    const opacityControls = animate(opacity, 0, {
+      duration: 0.5,
+      ease: 'easeIn',
+    })
+    return () => {
+      xControls.stop()
+      opacityControls.stop()
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
