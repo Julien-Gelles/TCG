@@ -4,67 +4,46 @@ import { motion } from 'motion/react';
 // ─── Root container ───────────────────────────────────────────────────────────
 
 export const Root = styled.div`
-  width: 100%;
-  height: 100%;
-  min-height: 100svh;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: radial-gradient(ellipse at 50% 60%, #12122a 0%, #070711 100%);
-  overflow: hidden;
-  position: relative;
 `;
 
-// ─── Stack phase ──────────────────────────────────────────────────────────────
+// ─── Deck phase ──────────────────────────────────────────────────────────────
 
-export const PerspectiveWrapper = styled(motion.div)`
+export const DeckWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 28px;
-  /* perspective here gives depth to StackCard z-axis transforms */
-  perspective: 1000px;
-  perspective-origin: 50% 45%;
+  gap: 32px;
 `;
 
-export const StackInner = styled(motion.div)`
+export const DeckContent = styled(motion.div)`
   position: relative;
   width: 280px;
   height: 392px;
-  /* preserve-3d passes the perspective context down to StackCard children */
-  transform-style: preserve-3d;
 `;
 
-/* motion.div so Motion can interpolate y / z / scale / opacity */
-export const StackCard = styled(motion.div)`
+export const DeckCard = styled(motion.div)`
   position: absolute;
-  inset: 0;
 `;
 
-/* Shell for the card back image in stack phases */
-export const CardBackShell = styled.div`
-  width: 100%;
-  height: 100%;
+export const CardBack = styled.div`
   border-radius: 16px;
-  overflow: hidden;
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.5),
     0 10px 28px rgba(0, 0, 0, 0.4);
 `;
 
-// ─── Flip card (stack_back_bis → card_front) ──────────────────────────────────
-/*
-  FlipCard rotates from rotateY:0 to rotateY:180.
-  FlipFace     = the back  (visible at 0°, hidden at 180°)
-  FlipFrontFace = the front (hidden at 0°, visible at 180°  via its own rotateY:180)
-  backface-visibility:hidden on both faces makes the swap seamless.
-*/
+// ─── Flip phase ──────────────────────────────────
 
 export const FlipCard = styled(motion.div)`
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  z-index: 999;
+
 `;
 
 export const FlipFace = styled.div`
@@ -94,6 +73,7 @@ export const FlipGlow = styled(motion.div)<{
   border-radius: 16px;
   pointer-events: none;
   ${({ $rarity }) => flipGlowStyles[$rarity]}
+  border: 2px solid red;
 `;
 
 const flipGlowStyles: Record<'common' | 'uncommon' | 'rare' | 'ultra', string> = {
@@ -111,7 +91,6 @@ const pulseAnimation = keyframes`
 `;
 
 export const Hint = styled.p`
-  margin: 0;
   color: rgba(255, 255, 255, 0.35);
   font-size: 13px;
   font-family: system-ui, -apple-system, sans-serif;
@@ -123,28 +102,13 @@ export const Hint = styled.p`
 // ─── Card reveal phase ────────────────────────────────────────────────────────
 
 export const RevealArea = styled(motion.div)`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 100svh;
-  /* mirrors PerspectiveWrapper: flex column + same gap so the card sits at the same Y */
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
-`;
-
-/*
-  Shared positioning context for the active card and all static cards below it.
-  Sized exactly to a card — both flex item (in RevealArea column) and
-  position:relative anchor (for StaticCardSlot).
-*/
-export const CardStack = styled.div`
-  position: relative;
-  width: 280px;
-  height: 392px;
-  flex-shrink: 0;
+  gap: 32px;
 `;
 
 /*
@@ -194,3 +158,11 @@ export const FinishedText = styled.p`
   font-family: system-ui, -apple-system, sans-serif;
   letter-spacing: 0.04em;
 `;
+
+export const FinishedButton = styled.button`
+  margin-top: 16px;
+  padding: 12px 24px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  `;
